@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -19,6 +19,7 @@ var (
 	format   string
 	dynamic  bool
 	quality  int
+	fixed    bool
 )
 
 func destDirectory() string {
@@ -30,23 +31,30 @@ func destDirectory() string {
 }
 
 func main() {
-	flag.IntVar(&width, "w", 960, "resized width ")
-	flag.IntVar(&height, "h", 640, "resized height ")
-	flag.IntVar(&quality, "q", 95, "jpg image quality ")
-	flag.BoolVar(&dynamic, "d", true, "adjust width and height dynamicly")
-	flag.StringVar(&destPath, "o", destDirectory(), "output directory default current location ")
-	flag.StringVar(&format, "f", "jpg", "output image format (jpg or png)")
-	flag.Parse()
 
-	if len(flag.Args()) == 0 {
-		fmt.Printf("\nUsage: resize [options] image_file_path\n\n")
+	flag.Usage = func() {
+		usage(lang)
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
+
+	flag.BoolVar(&fixed, "fixed", false, flagStrings["fixed"])
+	flag.IntVar(&width, "w", 960, flagStrings["width"])
+	flag.IntVar(&height, "h", 640, flagStrings["height"])
+	flag.IntVar(&quality, "q", 95, flagStrings["quality"])
+	flag.BoolVar(&dynamic, "d", true, flagStrings["dynamic"])
+	flag.StringVar(&destPath, "o", destDirectory(), flagStrings["destPath"])
+	flag.StringVar(&format, "f", "jpg", flagStrings["format"])
+	flag.Parse()
+
+	if len(flag.Args()) == 0 {
+		flag.Usage()
+	}
+
 	imgPath := flag.Args()[0]
 	img, err := imgio.Open(imgPath)
 	if err != nil {
-		panic(err)
+		log.Fatalln(errStrings["openfailed"])
 	}
 
 	if dynamic {
@@ -68,12 +76,15 @@ func main() {
 	ext := path.Ext(flag.Args()[0])
 	oldName := strings.TrimSuffix(fullName, ext)
 	fname := oldName + "_resized." + format
-	fpath := path.Join(destPath, fname)
+	outPath := path.Join(destPath, fname)
+	if fixed {
+		outPath = imgPath
+	}
 	encoder := imgio.JPEGEncoder(quality)
 	if format == "png" {
 		encoder = imgio.PNGEncoder()
 	}
-	if err := imgio.Save(fpath, resized, encoder); err != nil {
+	if err := imgio.Save(outPath, resized, encoder); err != nil {
 		panic(err)
 	}
 }
