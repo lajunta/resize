@@ -46,7 +46,7 @@ func usage(lang string) {
 		fmt.Print(`
 使用方法: 
 
-  resize [options] image_file_path
+  resize [options] image_file_path | images_directory
 	
 举例:
 
