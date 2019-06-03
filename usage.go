@@ -20,6 +20,7 @@ func setFlagStrings() {
 	switch zh {
 	case true:
 		errStrings["openfailed"] = "打开文件失败"
+		errStrings["specifypath"] = "请指定文件或文件夹路径"
 		flagStrings["fixed"] = "输出图片路径和输入路径的完全一样，将覆盖源文件"
 		flagStrings["width"] = "输出图片的宽度"
 		flagStrings["height"] = "输出图片的高度"
@@ -29,6 +30,7 @@ func setFlagStrings() {
 		flagStrings["format"] = "输出图片的格式(可选jpg,png),默认为jpg"
 	default:
 		errStrings["openfailed"] = "open image file failed"
+		errStrings["specifypath"] = "please specify file or directory path"
 		flagStrings["fixed"] = "output directory and name keep same as source"
 		flagStrings["width"] = "resized width "
 		flagStrings["height"] = "resized height "

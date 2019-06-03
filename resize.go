@@ -114,10 +114,17 @@ func main() {
 		}
 	}
 
+	// handle single image file
+	if len(flag.Args()) == 0 {
+		log.Println(errStrings["specifypath"])
+		flag.Usage()
+		os.Exit(1)
+	}
+
 	imgPath := flag.Args()[0]
 	fi, err := os.Stat(imgPath)
 	if os.IsNotExist(err) {
-		log.Fatalln("Source Image Not Existed")
+		log.Fatalln(errStrings["openfailed"])
 		os.Exit(1)
 	}
 
@@ -132,10 +139,6 @@ func main() {
 		os.Exit(0)
 	}
 
-	// handle single image file
-	if len(flag.Args()) == 0 {
-		flag.Usage()
-	}
 
 	fullName := path.Base(flag.Args()[0])
 	ext := path.Ext(flag.Args()[0])
